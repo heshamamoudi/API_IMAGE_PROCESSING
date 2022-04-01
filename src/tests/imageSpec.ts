@@ -62,6 +62,6 @@ afterAll(async (): Promise<void> => {
     expect(errMsg).not.toBeDefined();
   } catch {
     console.log(errMsg);
-    expect(errMsg).not.toBeDefined();
+    expect(errMsg).not.toBeUndefined();
   }
 });

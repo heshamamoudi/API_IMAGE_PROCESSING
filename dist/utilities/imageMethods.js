@@ -42,7 +42,10 @@ const getImgThmb_origin = (fields) => __awaiter(void 0, void 0, void 0, function
 //jimp processing
 const sharp_processing = (fields) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield Sharp(fields.src).resize(fields.w, fields.h).toFormat('jpg').toFile(fields.tg);
+        yield Sharp(fields.src)
+            .resize(fields.w, fields.h)
+            .toFormat('jpg')
+            .toFile(fields.tg);
         return;
     }
     catch (_b) {
@@ -62,15 +65,16 @@ const defineThmb = (fields) => __awaiter(void 0, void 0, void 0, function* () {
         case fields.width !== undefined && fields.height !== undefined:
             originPath1 = path.resolve(`${originPath}`, `${fields.imgName}.jpg`);
             pathtothumb = path.resolve(`${thumbingPath}`, `${fields.imgName}-w${fields.width}-h${fields.height}.jpg`);
-            w = parseInt(fields.width || "");
-            h = parseInt(fields.width || "");
-            if (!isNaN(w) || w + '' !== '' && !isNaN(h) || h + '' !== '')
+            w = parseInt(fields.width || '');
+            h = parseInt(fields.width || '');
+            if (!isNaN(w) || (w + '' !== '' && !isNaN(h)) || h + '' !== '')
                 return yield sharp_processing({
                     src: originPath1,
                     tg: pathtothumb,
-                    w: parseInt(w + ""),
-                    h: parseInt(h + "")
+                    w: parseInt(w + ''),
+                    h: parseInt(h + '')
                 });
+            break;
         default:
             throw Error('Please check administrator something went wrong');
     }
@@ -102,10 +106,8 @@ const verifier = (fields) => __awaiter(void 0, void 0, void 0, function* () {
             w = parseInt(fields.width || '');
             h = parseInt(fields.height || '');
             switch (true) {
-                case (Number.isNaN(w) ||
-                    (w < 1 && Number.isNaN(h)) ||
-                    h < 1):
-                    return "Please insert  a positive numbers  for the 'width/height' which is higher than 0.";
+                case Number.isNaN(w) || (w < 1 && Number.isNaN(h)) || h < 1:
+                    return "Please insert  a positive numbers  for the 'width and height' which is higher than 0.";
             }
             break;
         default:

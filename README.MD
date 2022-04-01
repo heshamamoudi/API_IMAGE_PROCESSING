@@ -25,3 +25,7 @@ after installing all dependences please see the Ex of use below:
 
 - http://localhost:5000/api/images?imgName=holagram&width=888&height=999
 
+for more instructions please use:
+
+- http://localhost:5000
+

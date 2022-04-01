@@ -59,6 +59,6 @@ afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (_a) {
         console.log(errMsg);
-        expect(errMsg).not.toBeDefined();
+        expect(errMsg).not.toBeUndefined();
     }
 }));

@@ -136,7 +136,7 @@ const verifier = async (
 
       switch (true) {
         case Number.isNaN(w) || (w < 1 && Number.isNaN(h)) || h < 1:
-          return "Please insert  a positive numbers  for the 'width/height' which is higher than 0.";
+          return "Please insert  a positive numbers  for the 'width and height' which is higher than 0.";
       }
       break;
 
