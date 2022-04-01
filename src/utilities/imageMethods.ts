@@ -1,10 +1,10 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import * as Jimp from 'jimp';
+import * as Sharp from 'sharp';
 import * as checks from './imageCheck';
 
 // interface for the jimp ... less errors and mistakes
-interface resizer_jimp {
+interface resizer_Sharp {
   src: string;
   tg: string;
   w: number;
@@ -18,8 +18,8 @@ interface imageInterface {
 }
 
 // creating origin path and thumb path
-const originPath = path.resolve(`${__dirname}`, '../images/full');
-const thumbingPath = path.resolve(`${__dirname}`, '../images/thumb');
+const originPath = path.resolve(`${__dirname}`, '../../images/full');
+const thumbingPath = path.resolve(`${__dirname}`, '../../images/thumb');
 
 const getImgThmb_origin = async (
   fields: imageInterface
@@ -52,12 +52,14 @@ const getImgThmb_origin = async (
 };
 
 //jimp processing
-const jimp_process = async (
-  fields: resizer_jimp
+const sharp_processing = async (
+  fields: resizer_Sharp
 ): Promise<undefined | string> => {
   try {
-    const img = (await Jimp.read(fields.src)).resize(fields.w, fields.h);
-    await img.writeAsync(fields.tg);
+    await Sharp(fields.src)
+      .resize(fields.w, fields.h)
+      .toFormat('jpg')
+      .toFile(fields.tg);
     return;
   } catch {
     return 'Jimp failed to Create image thumb and process with the image.';
@@ -69,8 +71,8 @@ const defineThmb = async (
 ): Promise<undefined | string> => {
   let originPath1: string;
   let pathtothumb: string;
-  let w: string;
-  let h: string;
+  let w: string | number;
+  let h: string | number;
   switch (true) {
     case fields.imgName === undefined ||
       fields.width === undefined ||
@@ -83,16 +85,16 @@ const defineThmb = async (
         `${thumbingPath}`,
         `${fields.imgName}-w${fields.width}-h${fields.height}.jpg`
       );
-      w = fields.width as string;
-      h = fields.height as string;
-
-      return await jimp_process({
-        src: originPath1,
-        tg: pathtothumb,
-        w: parseInt(w),
-        h: parseInt(h)
-      });
-
+      w = parseInt(fields.width || '');
+      h = parseInt(fields.width || '');
+      if (!isNaN(w) || (w + '' !== '' && !isNaN(h)) || h + '' !== '')
+        return await sharp_processing({
+          src: originPath1,
+          tg: pathtothumb,
+          w: parseInt(w + ''),
+          h: parseInt(h + '')
+        });
+      break;
     default:
       throw Error('Please check administrator something went wrong');
   }
@@ -108,7 +110,9 @@ const defineThmb = async (
   // modify image and save it as a thumb
 };
 //class ends
-const verifier = async (fields: imageInterface): Promise<undefined | string> => {
+const verifier = async (
+  fields: imageInterface
+): Promise<undefined | string> => {
   let existingImages: undefined | string;
   let h: number;
   let w: number;
@@ -129,13 +133,10 @@ const verifier = async (fields: imageInterface): Promise<undefined | string> => 
       // checking for valid width & height value
       w = parseInt(fields.width || '');
       h = parseInt(fields.height || '');
-      
-      switch (true){
-        case (Number.isNaN(w) ||
-        (w < 1 && Number.isNaN(h)) ||
-        h < 1
-      ):
-      return "Please insert  a positive numbers  for the 'width/height' which is higher than 0.";
+
+      switch (true) {
+        case Number.isNaN(w) || (w < 1 && Number.isNaN(h)) || h < 1:
+          return "Please insert  a positive numbers  for the 'width/height' which is higher than 0.";
       }
       break;
 
@@ -147,7 +148,7 @@ const verifier = async (fields: imageInterface): Promise<undefined | string> => 
 export default {
   getImgThmb_origin,
   defineThmb,
-  jimp_process,
+  sharp_processing,
   originPath,
   thumbingPath,
   verifier

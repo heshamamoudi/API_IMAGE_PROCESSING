@@ -21,7 +21,7 @@ app.use(index_1.default, logger_1.default);
 app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
     //path has to be defined
     yield checker.default.checkThumbDir();
-    yield checker.default.checkOriginDir();
+    // await checker.default.checkOriginDir();
     const url = `http://localhost:${port}`;
     console.log(`open me to check Api processing project ${url}`);
 }));

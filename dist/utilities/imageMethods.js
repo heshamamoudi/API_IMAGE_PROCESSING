@@ -11,11 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
 const path = require("path");
-const Jimp = require("jimp");
+const Sharp = require("sharp");
 const checks = require("./imageCheck");
 // creating origin path and thumb path
-const originPath = path.resolve(`${__dirname}`, '../images/full');
-const thumbingPath = path.resolve(`${__dirname}`, '../images/thumb');
+const originPath = path.resolve(`${__dirname}`, '../../images/full');
+const thumbingPath = path.resolve(`${__dirname}`, '../../images/thumb');
 const getImgThmb_origin = (fields) => __awaiter(void 0, void 0, void 0, function* () {
     let imgPath;
     switch (fields.imgName) {
@@ -40,10 +40,9 @@ const getImgThmb_origin = (fields) => __awaiter(void 0, void 0, void 0, function
     }
 });
 //jimp processing
-const jimp_process = (fields) => __awaiter(void 0, void 0, void 0, function* () {
+const sharp_processing = (fields) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const img = (yield Jimp.read(fields.src)).resize(fields.w, fields.h);
-        yield img.writeAsync(fields.tg);
+        yield Sharp(fields.src).resize(fields.w, fields.h).toFormat('jpg').toFile(fields.tg);
         return;
     }
     catch (_b) {
@@ -63,14 +62,15 @@ const defineThmb = (fields) => __awaiter(void 0, void 0, void 0, function* () {
         case fields.width !== undefined && fields.height !== undefined:
             originPath1 = path.resolve(`${originPath}`, `${fields.imgName}.jpg`);
             pathtothumb = path.resolve(`${thumbingPath}`, `${fields.imgName}-w${fields.width}-h${fields.height}.jpg`);
-            w = fields.width;
-            h = fields.height;
-            return yield jimp_process({
-                src: originPath1,
-                tg: pathtothumb,
-                w: parseInt(w),
-                h: parseInt(h)
-            });
+            w = parseInt(fields.width || "");
+            h = parseInt(fields.width || "");
+            if (!isNaN(w) || w + '' !== '' && !isNaN(h) || h + '' !== '')
+                return yield sharp_processing({
+                    src: originPath1,
+                    tg: pathtothumb,
+                    w: parseInt(w + ""),
+                    h: parseInt(h + "")
+                });
         default:
             throw Error('Please check administrator something went wrong');
     }
@@ -115,7 +115,7 @@ const verifier = (fields) => __awaiter(void 0, void 0, void 0, function* () {
 exports.default = {
     getImgThmb_origin,
     defineThmb,
-    jimp_process,
+    sharp_processing,
     originPath,
     thumbingPath,
     verifier
